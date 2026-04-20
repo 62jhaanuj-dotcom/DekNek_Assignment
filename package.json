@@ -1,0 +1,16 @@
+{
+  "name": "assignment",
+  "private": true,
+  "scripts": {
+    "dev": "powershell -Command \"Start-Process powershell -ArgumentList '-NoExit','-Command','Set-Location ''C:\\assignment\\server''; npm run dev'; Set-Location 'C:\\assignment\\client'; npm run dev\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev"
+  },
+  "dependencies": {
+    "axios": "^1.15.1",
+    "express-fileupload": "^1.5.2",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "react-router-dom": "^7.14.1"
+  }
+}
