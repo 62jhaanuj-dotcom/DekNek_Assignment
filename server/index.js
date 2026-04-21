@@ -1,54 +1,76 @@
+// ========================
+// IMPORTS
+// ========================
 const express = require("express");
 const app = express();
 
-// Import Routes
+// Routes
 const authRoutes = require("./routes/User");
 const profileRoutes = require("./routes/Profile");
 
-// Import Configs
+// Configs
 const database = require("./config/database");
 
-// Import Middlewares
+// Middlewares
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const helmet = require("helmet");
 
-// Load Environment Variables
+// ========================
+// ENV CONFIG
+// ========================
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 
-// Connect to Database
-database.connect();
+// ========================
+// SECURITY MIDDLEWARES
+// ========================
+app.set("trust proxy", 1); // Required for deployment (Render/Vercel)
 
-// --- Middlewares ---
+app.use(helmet());
+
+// ========================
+// BODY PARSING
+// ========================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(helmet()); // For security headers
 
-// CORS configuration
+// ========================
+// CORS CONFIG (SMART)
+// ========================
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? [process.env.FRONTEND_URL].filter(Boolean)
+    : ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"];
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
-// --- Routes ---
+
+// ========================
+// ROUTES
+// ========================
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/profile", profileRoutes);
 
-// Default Route/Health Check
+// ========================
+// HEALTH CHECK
+// ========================
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "Server is up and running!",
+    message: "Server is running",
   });
 });
 
-// --- Error Handling ---
-
-// 404 Handler
+// ========================
+// 404 HANDLER
+// ========================
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -56,16 +78,29 @@ app.use((req, res) => {
   });
 });
 
-// Global Error Handler
+// ========================
+// GLOBAL ERROR HANDLER
+// ========================
 app.use((err, req, res, next) => {
-  console.error("Internal Server Error:", err.stack);
-  res.status(500).json({
+  console.error("Error:", err.stack);
+
+  res.status(err.status || 500).json({
     success: false,
-    message: "Something went wrong on our side!",
+    message: err.message || "Internal Server Error",
   });
 });
 
-// --- Start Server ---
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// ========================
+// START SERVER
+// ========================
+const startServer = async () => {
+  await database.connect();
+
+  app.listen(PORT, () => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`Server running on http://localhost:${PORT}`);
+    }
+  });
+};
+
+startServer();

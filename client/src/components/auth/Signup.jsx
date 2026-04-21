@@ -21,12 +21,25 @@ const Signup = () => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setMessage('');
+
+    if (!formData.name.trim() || !formData.email.trim() || !formData.password) {
+      setMessageType('error');
+      setMessage('Name, email and password are required');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setMessageType('error');
+      setMessage('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
 
     try {
       await api.post('/auth/sendotp', {
-        name: formData.name,
-        email: formData.email,
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
       });
       setOtpSent(true);
       setMessageType('success');
@@ -42,10 +55,22 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     setMessage('');
+
+    if (!formData.otp.trim()) {
+      setMessageType('error');
+      setMessage('Please enter the OTP sent to your email');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await api.post('/auth/signup', formData);
+      await api.post('/auth/signup', {
+        ...formData,
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        otp: formData.otp.trim(),
+      });
       alert('Registration successful! Please login.');
       navigate('/login');
     } catch (err) {
@@ -62,18 +87,25 @@ const Signup = () => {
         label="Name"
         value={formData.name}
         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        required
+        disabled={otpSent}
       />
       <Input
         label="Email"
         type="email"
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        required
+        disabled={otpSent}
       />
       <Input
         label="Password"
         type="password"
         value={formData.password}
         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+        required
+        minLength={6}
+        disabled={otpSent}
       />
 
       <div className="mb-4">
@@ -81,6 +113,7 @@ const Signup = () => {
         <select
           value={formData.role}
           onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+          disabled={otpSent}
           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="student">Student</option>
@@ -94,6 +127,9 @@ const Signup = () => {
           value={formData.otp}
           onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
           placeholder="Enter 6 digit OTP"
+          required
+          inputMode="numeric"
+          autoComplete="one-time-code"
         />
       )}
 

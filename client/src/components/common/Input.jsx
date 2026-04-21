@@ -1,4 +1,4 @@
-const Input = ({ label, type = "text", value, onChange, placeholder, name }) => (
+const Input = ({ label, type = "text", value, onChange, placeholder, name, ...props }) => (
   <div className="mb-4">
     {label && <label className="block text-sm font-medium mb-1">{label}</label>}
     <input
@@ -7,6 +7,7 @@ const Input = ({ label, type = "text", value, onChange, placeholder, name }) => 
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      {...props}
       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
   </div>
