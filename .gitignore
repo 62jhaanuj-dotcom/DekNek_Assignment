@@ -19,6 +19,9 @@ dist-ssr/
 .env.*
 *.local
 
+# Project notes (local documentation)
+PROJECT_NOTES.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
