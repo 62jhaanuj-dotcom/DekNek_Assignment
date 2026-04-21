@@ -9,6 +9,9 @@ import SignupPage from './pages/SignupPage';
 import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
 
+// Auth Components
+import ResetPassword from './components/auth/ResetPassword';
+
 // Common Components
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -44,13 +47,19 @@ function App() {
               element={!user ? <SignupPage /> : <Navigate to="/dashboard" />} 
             />
 
-            {/* 4. Dashboard Page (Protected) */}
+            {/* 4. Reset Password Page */}
+            <Route 
+              path="/reset-password" 
+              element={<ResetPassword />} 
+            />
+
+            {/* 5. Dashboard Page (Protected) */}
             <Route 
               path="/dashboard" 
               element={user ? <DashboardPage /> : <Navigate to="/login" />} 
             />
 
-            {/* 5. Profile Page (Protected) */}
+            {/* 6. Profile Page (Protected) */}
             <Route 
               path="/profile" 
               element={user ? <ProfilePage /> : <Navigate to="/login" />} 

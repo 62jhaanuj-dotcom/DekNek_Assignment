@@ -1,6 +1,8 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const mailSender = require("../utils/mailSender");
+const { resetPassword: resetPasswordTemplate } = require("../mail/templates/resetPasswordTemplate");
 
 // Send reset token
 exports.resetPasswordToken = async (req, res) => {
@@ -15,18 +17,28 @@ exports.resetPasswordToken = async (req, res) => {
     const token = crypto.randomBytes(20).toString("hex");
 
     user.token = token;
-    user.resetPasswordExpires = Date.now() + 3600000;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
     await user.save();
 
-    // simple response instead of mail
-    res.status(200).json({
+    // Create reset link
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const resetLink = `${frontendUrl}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
+
+    // Send email with reset link
+    await mailSender(
+      email,
+      "Reset Your Password",
+      resetPasswordTemplate(user.name || "User", resetLink),
+    );
+
+    return res.status(200).json({
       success: true,
-      token, // for testing
-      message: "Reset token generated",
+      message: "Reset link sent to your email",
     });
   } catch (err) {
-    res.status(500).json({ message: "Error generating token" });
+    console.error(err);
+    return res.status(500).json({ message: "Error sending reset link" });
   }
 };
 
