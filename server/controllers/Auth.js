@@ -16,8 +16,7 @@ const generateOTP = () => {
 // ==================== SEND OTP ====================
 exports.sendOTP = async (req, res) => {
   try {
-    const name = req.body.name?.trim();
-    const email = req.body.email?.trim().toLowerCase();
+    const { name, email } = req.body;
 
     // check email
     if (!email) {
@@ -59,22 +58,12 @@ exports.sendOTP = async (req, res) => {
 // ==================== SIGNUP ====================
 exports.signup = async (req, res) => {
   try {
-    const name = req.body.name?.trim();
-    const email = req.body.email?.trim().toLowerCase();
-    const password = req.body.password;
-    const otp = req.body.otp?.trim();
-    const role = req.body.role;
+    const { name, email, password, otp, role } = req.body;
     const selectedRole = (role || "student").toLowerCase();
 
     // check required fields
     if (!name || !email || !password || !otp) {
       return res.status(400).json({ message: "All fields required" });
-    }
-
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters" });
     }
 
     if (!["student", "admin"].includes(selectedRole)) {
@@ -156,9 +145,6 @@ exports.signup = async (req, res) => {
       return res.status(400).json({
         message: "Admin account already exists. Please sign up as student.",
       });
-    }
-    if (err.code === 11000 && err.keyPattern?.email) {
-      return res.status(400).json({ message: "User already exists" });
     }
     return res.status(500).json({ message: "Signup error" });
   }
@@ -245,7 +231,7 @@ exports.changePassword = async (req, res) => {
       return res.status(400).json({ message: "All fields required" });
     }
 
-    if (newPassword.length < 6) {
+    if (password.length < 6) {
       return res
         .status(400)
         .json({ message: "Password must be at least 6 characters" });
