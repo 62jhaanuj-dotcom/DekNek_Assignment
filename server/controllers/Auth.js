@@ -4,7 +4,9 @@ const Profile = require("../models/Profile");
 const jwt = require("jsonwebtoken");
 const OTP = require("../models/OTP");
 const mailSender = require("../utils/mailSender");
-const { emailVerification } = require("../mail/templates/emailVerificationTemplate");
+const {
+  emailVerification,
+} = require("../mail/templates/emailVerificationTemplate");
 
 // function to generate 6 digit OTP
 const generateOTP = () => {
@@ -40,7 +42,7 @@ exports.sendOTP = async (req, res) => {
     await mailSender(
       email,
       "Verify your email",
-      emailVerification(name || "User", otp)
+      emailVerification(name || "User", otp),
     );
 
     return res.status(200).json({
@@ -154,7 +156,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     // send token in cookie
@@ -204,8 +206,15 @@ exports.changePassword = async (req, res) => {
     const { oldPassword, newPassword } = req.body;
 
     // check fields
+
     if (!oldPassword || !newPassword) {
       return res.status(400).json({ message: "All fields required" });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
     }
 
     // get user

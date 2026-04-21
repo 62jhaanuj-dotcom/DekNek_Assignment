@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 const Dashboard = () => {
   const { user } = useAuth();
 
-  // Mock data - ise baad mein api.js se replace kar sakte ho
+  // Mock data - ise baad mein api.js se replace kar sakte 
   const stats = [
     { label: "Total Projects", value: "12", color: "bg-blue-500" },
     { label: "Active Tasks", value: "05", color: "bg-green-500" },
