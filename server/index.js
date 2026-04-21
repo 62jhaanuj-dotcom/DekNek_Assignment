@@ -31,6 +31,31 @@ const toOrigin = (url) => {
   }
 };
 
+const getAllowedOrigins = () => {
+  if (process.env.NODE_ENV !== "production") {
+    return ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"];
+  }
+
+  const urls = [
+    process.env.FRONTEND_URL,
+    ...(process.env.FRONTEND_URLS || "").split(","),
+  ];
+
+  return urls.map((url) => toOrigin(url.trim())).filter(Boolean);
+};
+
+const isAllowedVercelPreview = (origin) => {
+  try {
+    const { hostname } = new URL(origin);
+    return (
+      hostname === "dek-nek-assignment-two.vercel.app" ||
+      /^dek-nek-assignment-[a-z0-9-]+\.vercel\.app$/.test(hostname)
+    );
+  } catch {
+    return false;
+  }
+};
+
 // ========================
 // SECURITY MIDDLEWARES
 // ========================
@@ -48,15 +73,16 @@ app.use(cookieParser());
 // ========================
 // CORS CONFIG (SMART)
 // ========================
-const allowedOrigins =
-  process.env.NODE_ENV === "production"
-    ? [toOrigin(process.env.FRONTEND_URL)].filter(Boolean)
-    : ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"];
+const allowedOrigins = getAllowedOrigins();
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        isAllowedVercelPreview(origin)
+      ) {
         return callback(null, true);
       }
 
