@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const defaultApiUrl = import.meta.env.PROD
+  ? 'https://deknek-assignment-i5zo.onrender.com/api/v1'
+  : 'http://localhost:5000/api/v1';
+const rawApiUrl = import.meta.env.VITE_API_URL || defaultApiUrl;
 
 const normalizedApiUrl = rawApiUrl.replace(/\/$/, '');
 const baseURL = normalizedApiUrl.endsWith('/api/v1')
