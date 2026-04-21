@@ -65,14 +65,21 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      await api.post('/auth/signup', {
+      const res = await api.post('/auth/signup', {
         ...formData,
         name: formData.name.trim(),
         email: formData.email.trim().toLowerCase(),
         otp: formData.otp.trim(),
       });
-      alert('Registration successful! Please login.');
-      navigate('/login');
+
+      // Auto-login: Store token
+      localStorage.setItem('token', res.data.token);
+      
+      // Update api default header with token for future requests
+      api.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+
+      // Redirect to dashboard - AuthContext will fetch user on next render
+      navigate('/dashboard');
     } catch (err) {
       setMessageType('error');
       setMessage(err.response?.data?.message || 'Signup failed');

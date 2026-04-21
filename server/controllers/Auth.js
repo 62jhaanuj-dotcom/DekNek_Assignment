@@ -126,9 +126,32 @@ exports.signup = async (req, res) => {
     // delete OTP after use
     await OTP.deleteMany({ email });
 
+    // generate JWT token for auto-login
+    const token = jwt.sign(
+      { id: user._id || (await User.findOne({ email }))._id, role: selectedRole },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+    );
+
+    // send token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    // get created user for response
+    const newUser = await User.findOne({ email });
+
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
     });
   } catch (err) {
     console.error(err);
