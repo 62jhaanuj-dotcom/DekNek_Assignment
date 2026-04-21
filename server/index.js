@@ -23,6 +23,14 @@ const helmet = require("helmet");
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 
+const toOrigin = (url) => {
+  try {
+    return url ? new URL(url).origin : null;
+  } catch {
+    return null;
+  }
+};
+
 // ========================
 // SECURITY MIDDLEWARES
 // ========================
@@ -42,12 +50,18 @@ app.use(cookieParser());
 // ========================
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? [process.env.FRONTEND_URL].filter(Boolean)
+    ? [toOrigin(process.env.FRONTEND_URL)].filter(Boolean)
     : ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"];
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );

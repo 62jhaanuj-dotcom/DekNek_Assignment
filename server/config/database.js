@@ -7,7 +7,7 @@ exports.connect = async () => {
 
   if (!mongoUrl) {
     console.error(
-      "DB Connection Failed: Missing MONGODB_URL in server/.env",
+      "DB Connection Failed: Missing MONGODB_URL environment variable",
     );
     process.exit(1);
   }
