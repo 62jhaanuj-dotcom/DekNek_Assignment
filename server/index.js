@@ -7,22 +7,19 @@ const profileRoutes = require("./routes/Profile");
 
 // Import Configs
 const database = require("./config/database");
-const { cloudinaryConnect } = require("./config/cloudinary");
 
 // Import Middlewares
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const helmet = require("helmet");
-const fileUpload = require("express-fileupload");
 
 // Load Environment Variables
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 
-// Connect to Database and Cloudinary
+// Connect to Database
 database.connect();
-cloudinaryConnect();
 
 // --- Middlewares ---
 app.use(express.json());
@@ -37,14 +34,6 @@ app.use(
     credentials: true,
   })
 );
-// File Upload Middleware 
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "/tmp/",
-  })
-);
-
 // --- Routes ---
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/profile", profileRoutes);
