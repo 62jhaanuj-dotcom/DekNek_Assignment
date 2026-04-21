@@ -18,7 +18,7 @@ const Signup = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('error');
 
-  const handleSendOtp = async (e) => {
+  const handleSendOTP = async (e) => {
     e.preventDefault();
     setMessage('');
 

@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const rawApiUrl = import.meta.env.VITE_API_URL;
+
+if (!rawApiUrl) {
+  throw new Error("VITE_API_URL is not defined");
+}
+
 const normalizedApiUrl = rawApiUrl.replace(/\/$/, '');
 const baseURL = normalizedApiUrl.endsWith('/api/v1')
   ? normalizedApiUrl
@@ -13,7 +18,6 @@ const api = axios.create({
   },
 });
 
-// Interceptor to add JWT token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
