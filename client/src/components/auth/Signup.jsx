@@ -104,6 +104,7 @@ const Signup = () => {
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         required
         disabled={otpSent}
+        autocomplete="email"
       />
       <Input
         label="Password"
@@ -113,6 +114,7 @@ const Signup = () => {
         required
         minLength={6}
         disabled={otpSent}
+        autocomplete="new-password"
       />
 
       <div className="mb-4">

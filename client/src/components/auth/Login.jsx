@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import Input from '../common/Input';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -25,21 +26,21 @@ const Login = () => {
   return (
     <div className="login-form space-y-4">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input 
-          type="email" 
-          placeholder="Email" 
-          required
+        <Input
+          type="email"
+          placeholder="Email"
           value={formData.email}
-          onChange={(e) => setFormData({...formData, email: e.target.value})} 
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input 
-          type="password" 
-          placeholder="Password" 
+          onChange={(e) => setFormData({...formData, email: e.target.value})}
           required
+          autocomplete="email"
+        />
+        <Input
+          type="password"
+          placeholder="Password"
           value={formData.password}
-          onChange={(e) => setFormData({...formData, password: e.target.value})} 
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onChange={(e) => setFormData({...formData, password: e.target.value})}
+          required
+          autocomplete="current-password"
         />
         <button 
           type="submit" 

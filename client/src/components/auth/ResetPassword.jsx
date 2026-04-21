@@ -86,6 +86,7 @@ const ResetPassword = () => {
         placeholder="Enter new password"
         required
         minLength={6}
+        autocomplete="new-password"
       />
 
       <Input
@@ -96,6 +97,7 @@ const ResetPassword = () => {
         placeholder="Confirm your password"
         required
         minLength={6}
+        autocomplete="new-password"
       />
 
       {message && (

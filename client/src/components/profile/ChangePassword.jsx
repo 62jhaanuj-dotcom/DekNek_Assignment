@@ -52,6 +52,7 @@ const ChangePassword = () => {
           value={passwords.oldPassword}
           onChange={handleChange}
           placeholder="Enter current password"
+          autocomplete="current-password"
         />
         <Input
           label="New Password"
@@ -60,6 +61,7 @@ const ChangePassword = () => {
           value={passwords.newPassword}
           onChange={handleChange}
           placeholder="Minimum 6 characters"
+          autocomplete="new-password"
         />
         <Input
           label="Confirm New Password"
@@ -68,6 +70,7 @@ const ChangePassword = () => {
           value={passwords.confirmPassword}
           onChange={handleChange}
           placeholder="Re-type new password"
+          autocomplete="new-password"
         />
         
         <button
