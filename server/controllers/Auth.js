@@ -115,7 +115,7 @@ exports.signup = async (req, res) => {
     const profile = await Profile.create({});
 
     // create user
-    await User.create({
+    const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -128,7 +128,7 @@ exports.signup = async (req, res) => {
 
     // generate JWT token for auto-login
     const token = jwt.sign(
-      { id: user._id || (await User.findOne({ email }))._id, role: selectedRole },
+      { id: newUser._id, role: selectedRole },
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
@@ -138,9 +138,6 @@ exports.signup = async (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
-
-    // get created user for response
-    const newUser = await User.findOne({ email });
 
     return res.status(201).json({
       success: true,
